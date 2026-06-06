@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSB Online — Muallimat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0B1F3A;
+            --navy-light: #122848;
+            --gold: #C9973A;
+            --gold-light: #E5B95A;
+            --gold-pale: #F5E6C8;
+            --cream: #FAF6EE;
+            --text-muted: #6B7A8F;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--navy);
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* NOISE TEXTURE OVERLAY */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(11, 31, 58, 0.97);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            box-shadow: 0 1px 0 rgba(201, 151, 58, 0.3);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-emblem {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .logo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.02em;
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            color: var(--gold-light);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.88rem;
+            letter-spacing: 0.04em;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold-light);
+        }
+
+        .btn-daftar-nav {
+            background: var(--gold);
+            color: var(--navy) !important;
+            padding: 0.55rem 1.4rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s, transform 0.1s !important;
+        }
+
+        .btn-daftar-nav:hover {
+            background: var(--gold-light) !important;
+            color: var(--navy) !important;
+            transform: translateY(-1px);
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: var(--navy);
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(ellipse 80% 60% at 70% 50%, rgba(201, 151, 58, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 80% at 10% 80%, rgba(201, 151, 58, 0.05) 0%, transparent 50%);
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201, 151, 58, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 151, 58, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Batik-inspired diagonal accent */
+        .hero-accent {
+            position: absolute;
+            right: -100px;
+            top: -100px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 151, 58, 0.12);
+            pointer-events: none;
+        }
+
+        .hero-accent::before {
+            content: '';
+            position: absolute;
+            inset: 60px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 151, 58, 0.08);
+        }
+
+        .hero-accent::after {
+            content: '';
+            position: absolute;
+            inset: 120px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 151, 58, 0.06);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            padding: 8rem 2rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(201, 151, 58, 0.15);
+            border: 1px solid rgba(201, 151, 58, 0.3);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            color: var(--gold-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            color: white;
+            line-height: 1.08;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
+
+        .hero-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gold);
+            color: var(--navy);
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 151, 58, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: white;
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* COUNTDOWN CARD */
+        .countdown-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(201, 151, 58, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .countdown-label::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--gold);
+            display: block;
+        }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .countdown-unit {
+            text-align: center;
+            background: rgba(11, 31, 58, 0.6);
+            border: 1px solid rgba(201, 151, 58, 0.15);
+            border-radius: 10px;
+            padding: 1rem 0.5rem;
+        }
+
+        .countdown-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            display: block;
+            line-height: 1;
+        }
+
+        .countdown-seg {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: block;
+            margin-top: 0.4rem;
+        }
+
+        .progress-section {
+            margin-top: 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .progress-label {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-val {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            border-radius: 100px;
+            width: 68%;
+            transition: width 1.5s ease;
+        }
+
+        /* STATS BAR */
+        .stats-bar {
+            background: var(--navy-light);
+            border-top: 1px solid rgba(201, 151, 58, 0.12);
+            border-bottom: 1px solid rgba(201, 151, 58, 0.12);
+        }
+
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            position: relative;
+        }
+
+        .stats-inner::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(201, 151, 58, 0.12);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .stat-item+.stat-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(201, 151, 58, 0.1);
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* SECTION STYLES */
+        section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-tag::before {
+            content: '';
+            width: 24px;
+            height: 1px;
+            background: var(--gold);
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1.2rem;
+            color: var(--navy);
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.75;
+            max-width: 520px;
+        }
+
+        /* JALUR CARDS */
+        .jalur-section {
+            background: white;
+        }
+
+        .jalur-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3.5rem;
+        }
+
+        .jalur-card {
+            border: 1px solid rgba(11, 31, 58, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .jalur-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(11, 31, 58, 0.1);
+            border-color: var(--gold);
+        }
+
+        .jalur-card-header {
+            padding: 2rem 2rem 1.5rem;
+            position: relative;
+        }
+
+        .jalur-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .icon-svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.75;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .jalur-icon-wrap .icon-svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .icon-prestasi {
+            background: rgba(201, 151, 58, 0.12);
+            color: var(--gold);
+        }
+
+        .icon-reguler {
+            background: rgba(11, 31, 58, 0.07);
+            color: var(--navy);
+        }
+
+        .icon-afirmasi {
+            background: rgba(52, 168, 83, 0.1);
+            color: #2E7D4E;
+        }
+
+        .icon-perpindahan {
+            background: rgba(66, 133, 244, 0.1);
+        }
+
+        .jalur-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .badge-icon {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .badge-hot {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-open {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-limited {
+            background: #EDE9FE;
+            color: #4C1D95;
+        }
+
+        .badge-soon {
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .jalur-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .jalur-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        .jalur-card-footer {
+            padding: 1.25rem 2rem;
+            border-top: 1px solid rgba(11, 31, 58, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quota-info {
+            font-size: 0.8rem;
+        }
+
+        .quota-label {
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .quota-num {
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 1rem;
+        }
+
+        .card-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .jalur-card:hover .card-arrow {
+            background: var(--gold);
+            color: white;
+        }
+
+        /* ALUR DAFTAR */
+        .alur-section {
+            background: var(--navy);
+            overflow: hidden;
+        }
+
+        .alur-section .section-title {
+            color: white;
+        }
+
+        .alur-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            margin-top: 3.5rem;
+            position: relative;
+        }
+
+        .alur-steps::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201, 151, 58, 0.4), var(--gold), rgba(201, 151, 58, 0.4), transparent);
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        .step-num {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 151, 58, 0.3);
+            background: rgba(201, 151, 58, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 1.25rem;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .step-item:hover .step-num {
+            background: var(--gold);
+            color: var(--navy);
+            border-color: var(--gold);
+            transform: scale(1.1);
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        /* KEUNGGULAN */
+        .unggulan-section {
+            background: var(--cream);
+        }
+
+        .unggulan-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+            margin-top: 0;
+        }
+
+        .unggulan-list {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .unggulan-item {
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            padding: 1.4rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid rgba(11, 31, 58, 0.06);
+            transition: all 0.25s;
+        }
+
+        .unggulan-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 16px rgba(201, 151, 58, 0.12);
+        }
+
+        .unggulan-icon {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--gold-pale);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+        }
+
+        .unggulan-icon .icon-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .unggulan-title {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .unggulan-desc {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        .visual-card {
+            background: var(--navy);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visual-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 151, 58, 0.12) 0%, transparent 70%);
+        }
+
+        .vc-title {
+            font-size: 0.75rem;
+            color: var(--gold-light);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .vc-chart {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .vc-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vc-bar-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .vc-bar-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .vc-bar-fill {
+            height: 100%;
+            border-radius: 100px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transition: width 1.5s ease;
+        }
+
+        .vc-bar-pct {
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            font-weight: 600;
+            width: 32px;
+            text-align: right;
+        }
+
+        .vc-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin: 1.5rem 0;
+        }
+
+        .vc-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .vc-big-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .vc-big-label {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 0.3rem;
+        }
+
+        .vc-award {
+            text-align: right;
+        }
+
+        .vc-award-icon {
+            margin-bottom: 0.3rem;
+            display: flex;
+            justify-content: flex-end;
+            color: var(--gold-light);
+        }
+
+        .vc-award-icon .icon-svg {
+            width: 32px;
+            height: 32px;
+            stroke-width: 1.5;
+        }
+
+        .vc-award-text {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        /* PENGUMUMAN / TIMELINE */
+        .pengumuman-section {
+            background: white;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 5rem;
+            align-items: start;
+            margin-top: 3.5rem;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: linear-gradient(180deg, var(--gold), rgba(201, 151, 58, 0.1));
+        }
+
+        .tl-item {
+            display: flex;
+            gap: 1.5rem;
+            padding-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .tl-dot {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tl-active .tl-dot {
+            background: var(--gold);
+            color: var(--navy);
+            box-shadow: 0 0 0 4px rgba(201, 151, 58, 0.15);
+        }
+
+        .tl-upcoming .tl-dot {
+            background: rgba(11, 31, 58, 0.07);
+            color: var(--navy);
+            border: 1px solid rgba(11, 31, 58, 0.12);
+        }
+
+        .tl-content {
+            flex: 1;
+        }
+
+        .tl-date {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.35rem;
+        }
+
+        .tl-title {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .tl-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .tl-upcoming .tl-title {
+            color: rgba(11, 31, 58, 0.5);
+        }
+
+        .tl-upcoming .tl-date {
+            color: rgba(201, 151, 58, 0.5);
+        }
+
+        /* FAQ */
+        .faq-list {
+            display: grid;
+            gap: 1px;
+            background: rgba(11, 31, 58, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-item {
+            background: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .faq-q {
+            padding: 1.4rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .faq-q-text {
+            font-weight: 500;
+            font-size: 0.92rem;
+            color: var(--navy);
+        }
+
+        .faq-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-size: 1rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .faq-item.open .faq-icon {
+            background: var(--gold);
+            color: white;
+            transform: rotate(45deg);
+        }
+
+        .faq-a {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item.open .faq-a {
+            padding: 0 1.5rem 1.25rem;
+            max-height: 200px;
+        }
+
+        .faq-a-text {
+            font-size: 0.87rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: var(--navy);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-bg {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(201, 151, 58, 0.1) 0%, transparent 60%);
+        }
+
+        .cta-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 7rem 2rem;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            color: white;
+            margin-bottom: 1.2rem;
+            line-height: 1.15;
+        }
+
+        .cta-title em {
+            color: var(--gold-light);
+        }
+
+        .cta-desc {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.05rem;
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-deadline {
+            margin-top: 2rem;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.05em;
+        }
+
+        .cta-deadline strong {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #080F1D;
+            border-top: 1px solid rgba(201, 151, 58, 0.1);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.35);
+            line-height: 1.75;
+            margin-top: 1rem;
+            max-width: 280px;
+        }
+
+        .footer-col-title {
+            font-size: 0.72rem;
+            color: var(--gold);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: grid;
+            gap: 0.6rem;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold-light);
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .fc-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: rgba(201, 151, 58, 0.1);
+            border: 1px solid rgba(201, 151, 58, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            color: var(--gold-light);
+        }
+
+        .fc-icon .icon-svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .fc-text {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copy {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .footer-accred {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .accred-badge {
+            background: rgba(201, 151, 58, 0.15);
+            border: 1px solid rgba(201, 151, 58, 0.25);
+            color: var(--gold-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        /* SCROLL ANIMATION */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 1.5px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* MOBILE MENU */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--navy);
+            z-index: 99;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .stats-inner {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .jalur-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .unggulan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .alur-steps {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .alur-steps::before {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">
+            <img class="logo-emblem" src="https://h.top4top.io/p_3809mnyx31.png" alt="Logo Muallimat">
+            <div class="logo-text">
+                <span class="logo-title">Muallimat</span>
+                <span class="logo-sub">Madrasah Mu'allimaat Yogyakarta</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#jalur">Jalur Masuk</a></li>
+            <li><a href="#alur">Cara Daftar</a></li>
+            <li><a href="#keunggulan">Keunggulan</a></li>
+            <li><a href="#jadwal">Jadwal</a></li>
+            <li><a href="#daftar" class="btn-daftar-nav">Daftar Sekarang →</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" onclick="toggleMenu()">Beranda</a>
+        <a href="#jalur" onclick="toggleMenu()">Jalur Masuk</a>
+        <a href="#alur" onclick="toggleMenu()">Cara Daftar</a>
+        <a href="#keunggulan" onclick="toggleMenu()">Keunggulan</a>
+        <a href="#jadwal" onclick="toggleMenu()">Jadwal</a>
+        <a href="#daftar" onclick="toggleMenu()" style="color: var(--gold);">Daftar Sekarang →</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-pattern"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-accent"></div>
+
+        <div class="hero-content">
+            <div>
+                <div class="hero-badge">
+                    <div class="badge-dot"></div>
+                    Pendaftaran Dibuka · Tahun Ajaran 2025/2026
+                </div>
+                <h1 class="hero-title">
+                    Wujudkan<br>
+                    <em>Prestasi Terbaik</em><br>
+                    Masa Depanmu
+                </h1>
+                <p class="hero-desc">
+                    Bergabunglah bersama ribuan siswi berprestasi di Muallimat. Pendidikan berkualitas, lingkungan kondusif, dan fasilitas modern untuk generasi pemimpin bangsa.
+                </p>
+                <div class="hero-cta">
+                    <a href="#daftar" class="btn-primary">
+                        ✦ &nbsp;Mulai Pendaftaran
+                    </a>
+                    <a href="#jalur" class="btn-secondary">
+                        Lihat Jalur Masuk &nbsp;→
+                    </a>
+                </div>
+            </div>
+
+            <div class="countdown-card">
+                <div class="countdown-label">Penutupan Pendaftaran</div>
+                <div class="countdown-grid">
+                    <div class="countdown-unit">
+                        <span class="countdown-num" id="cd-hari">42</span>
+                        <span class="countdown-seg">Hari</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-num" id="cd-jam">08</span>
+                        <span class="countdown-seg">Jam</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-num" id="cd-menit">33</span>
+                        <span class="countdown-seg">Menit</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-num" id="cd-detik">17</span>
+                        <span class="countdown-seg">Detik</span>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span class="progress-label">Kursi Terisi</span>
+                        <span class="progress-val">238 / 360 Kursi</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stats-inner">
+            <div class="stat-item reveal">
+                <div class="stat-number">98<span style="font-size:1.5rem">%</span></div>
+                <div class="stat-label">Kelulusan UN</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-1">
+                <div class="stat-number">47+</div>
+                <div class="stat-label">Prestasi Nasional</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-2">
+                <div class="stat-number">12K+</div>
+                <div class="stat-label">Alumni Sukses</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-3">
+                <div class="stat-number">A</div>
+                <div class="stat-label">Akreditasi BAN-S</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JALUR MASUK -->
+    <section id="jalur" class="jalur-section">
+        <div class="section-inner">
+            <div class="section-tag">Jalur Penerimaan</div>
+            <h2 class="section-title">Pilih Jalur<br>yang Sesuai Untukmu</h2>
+            <p class="section-desc">Tersedia empat jalur penerimaan dengan persyaratan dan keunggulan masing-masing. Pilih jalur yang paling sesuai dengan potensimu.</p>
+
+            <div class="jalur-grid">
+                <div class="jalur-card reveal">
+                    <div class="jalur-card-header">
+                        <span class="jalur-badge badge-hot"><svg class="badge-icon" viewBox="0 0 24 24"><path d="M12 2c1 3 3 5 3 8a3 3 0 1 1-6 0c0-3 2-5 3-8z"/><path d="M8.5 14.5A4.5 4.5 0 0 0 12 18a4.5 4.5 0 0 0 3.5-3.5"/></svg> Populer</span>
+                        <div class="jalur-icon-wrap icon-prestasi"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v3a5 5 0 0 1-10 0V4z"/><path d="M5 4H3v1a3 3 0 0 0 3 3"/><path d="M19 4h2v1a3 3 0 0 1-3 3"/></svg></div>
+                        <div class="jalur-name">Jalur Prestasi</div>
+                        <p class="jalur-desc">Diperuntukkan bagi siswa berprestasi di bidang akademik maupun non-akademik. Nilai rapor minimal 85 atau juara tingkat kabupaten/kota.</p>
+                    </div>
+                    <div class="jalur-card-footer">
+                        <div class="quota-info">
+                            <span class="quota-label">Kuota Tersedia</span>
+                            <span class="quota-num">90 Kursi</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </div>
+
+                <div class="jalur-card reveal reveal-delay-1">
+                    <div class="jalur-card-header">
+                        <span class="jalur-badge badge-open"><svg class="badge-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Buka</span>
+                        <div class="jalur-icon-wrap icon-reguler"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></div>
+                        <div class="jalur-name">Jalur Reguler</div>
+                        <p class="jalur-desc">Seleksi berdasarkan nilai ujian nasional dan tes kemampuan dasar. Terbuka untuk seluruh lulusan SMP sederajat se-wilayah.</p>
+                    </div>
+                    <div class="jalur-card-footer">
+                        <div class="quota-info">
+                            <span class="quota-label">Kuota Tersedia</span>
+                            <span class="quota-num">180 Kursi</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </div>
+
+                <div class="jalur-card reveal reveal-delay-2">
+                    <div class="jalur-card-header">
+                        <span class="jalur-badge badge-limited"><svg class="badge-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Terbatas</span>
+                        <div class="jalur-icon-wrap icon-afirmasi"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                        <div class="jalur-name">Jalur Afirmasi</div>
+                        <p class="jalur-desc">Khusus bagi calon siswa dari keluarga kurang mampu dan penyandang disabilitas. Didukung program beasiswa penuh dari pemerintah.</p>
+                    </div>
+                    <div class="jalur-card-footer">
+                        <div class="quota-info">
+                            <span class="quota-label">Kuota Tersedia</span>
+                            <span class="quota-num">54 Kursi</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALUR DAFTAR -->
+    <section id="alur" class="alur-section">
+        <div class="section-inner">
+            <div class="section-tag" style="color: var(--gold-light);">Cara Mendaftar</div>
+            <h2 class="section-title" style="color: white; max-width: 400px;">Lima Langkah Mudah Menuju SMA Impian</h2>
+
+            <div class="alur-steps">
+                <div class="step-item reveal">
+                    <div class="step-num">1</div>
+                    <div class="step-title">Buat Akun</div>
+                    <p class="step-desc">Daftarkan diri dengan nomor NISN dan email aktif yang valid</p>
+                </div>
+                <div class="step-item reveal reveal-delay-1">
+                    <div class="step-num">2</div>
+                    <div class="step-title">Isi Formulir</div>
+                    <p class="step-desc">Lengkapi data pribadi, data orang tua, dan pilihan jurusan</p>
+                </div>
+                <div class="step-item reveal reveal-delay-2">
+                    <div class="step-num">3</div>
+                    <div class="step-title">Upload Dokumen</div>
+                    <p class="step-desc">Unggah rapor, KK, akte, dan dokumen pendukung lainnya</p>
+                </div>
+                <div class="step-item reveal reveal-delay-3">
+                    <div class="step-num">4</div>
+                    <div class="step-title">Ikuti Seleksi</div>
+                    <p class="step-desc">Tes tertulis online atau kunjungi sekolah sesuai jadwal</p>
+                </div>
+                <div class="step-item reveal reveal-delay-4">
+                    <div class="step-num">5</div>
+                    <div class="step-title">Pengumuman</div>
+                    <p class="step-desc">Cek hasil seleksi dan lakukan registrasi ulang bila diterima</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KEUNGGULAN -->
+    <section id="keunggulan" class="unggulan-section">
+        <div class="section-inner">
+            <div class="unggulan-grid">
+                <div>
+                    <div class="section-tag">Mengapa Kami</div>
+                    <h2 class="section-title">Sekolah Terbaik<br>untuk Generasi Terbaik</h2>
+                    <p class="section-desc">Kami berkomitmen mencetak lulusan yang siap menghadapi tantangan global dengan bekal ilmu, karakter, dan keterampilan terkini.</p>
+
+                    <div class="unggulan-list">
+                        <div class="unggulan-item reveal">
+                            <div class="unggulan-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"/></svg></div>
+                            <div>
+                                <div class="unggulan-title">Guru Berpengalaman & Tersertifikasi</div>
+                                <p class="unggulan-desc">Lebih dari 85% tenaga pengajar berpendidikan S2 dengan pengalaman mengajar rata-rata 12 tahun di bidangnya.</p>
+                            </div>
+                        </div>
+                        <div class="unggulan-item reveal reveal-delay-1">
+                            <div class="unggulan-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6.5L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-10.5V3"/><path d="M8 15h8"/></svg></div>
+                            <div>
+                                <div class="unggulan-title">Laboratorium Modern Lengkap</div>
+                                <p class="unggulan-desc">Lab fisika, kimia, biologi, komputer, dan bahasa berstandar internasional dengan peralatan terkini.</p>
+                            </div>
+                        </div>
+                        <div class="unggulan-item reveal reveal-delay-2">
+                            <div class="unggulan-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                            <div>
+                                <div class="unggulan-title">Program Pertukaran Internasional</div>
+                                <p class="unggulan-desc">Kolaborasi dengan 14 sekolah mitra di Asia Tenggara untuk program study exchange dan joint competition.</p>
+                            </div>
+                        </div>
+                        <div class="unggulan-item reveal reveal-delay-3">
+                            <div class="unggulan-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15 8a3 3 0 1 0-6 0c0 2 1 3 1 5h4c0-2 1-3 1-5z"/><path d="M12 2v1"/></svg></div>
+                            <div>
+                                <div class="unggulan-title">Ekstrakurikuler 40+ Pilihan</div>
+                                <p class="unggulan-desc">Dari robotik, debat, seni pertunjukan, olahraga, hingga kewirausahaan — selalu ada wadah untuk setiap bakat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="visual-card reveal">
+                        <div class="vc-title">Sebaran Lulusan ke PTN Favorit</div>
+                        <div class="vc-chart">
+                            <div class="vc-bar-item">
+                                <div class="vc-bar-label">Univ. Indonesia</div>
+                                <div class="vc-bar-track">
+                                    <div class="vc-bar-fill" data-width="82"></div>
+                                </div>
+                                <div class="vc-bar-pct">82%</div>
+                            </div>
+                            <div class="vc-bar-item">
+                                <div class="vc-bar-label">ITB</div>
+                                <div class="vc-bar-track">
+                                    <div class="vc-bar-fill" data-width="74"></div>
+                                </div>
+                                <div class="vc-bar-pct">74%</div>
+                            </div>
+                            <div class="vc-bar-item">
+                                <div class="vc-bar-label">UGM</div>
+                                <div class="vc-bar-track">
+                                    <div class="vc-bar-fill" data-width="68"></div>
+                                </div>
+                                <div class="vc-bar-pct">68%</div>
+                            </div>
+                            <div class="vc-bar-item">
+                                <div class="vc-bar-label">ITS</div>
+                                <div class="vc-bar-track">
+                                    <div class="vc-bar-fill" data-width="61"></div>
+                                </div>
+                                <div class="vc-bar-pct">61%</div>
+                            </div>
+                            <div class="vc-bar-item">
+                                <div class="vc-bar-label">Unpad</div>
+                                <div class="vc-bar-track">
+                                    <div class="vc-bar-fill" data-width="55"></div>
+                                </div>
+                                <div class="vc-bar-pct">55%</div>
+                            </div>
+                        </div>
+                        <hr class="vc-divider">
+                        <div class="vc-footer">
+                            <div>
+                                <div class="vc-big-num">94%</div>
+                                <div class="vc-big-label">Lulus ke PTN · Angkatan 2024</div>
+                            </div>
+                            <div class="vc-award">
+                                <span class="vc-award-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5 7 22l5-3 5 3-1.5-7.5"/></svg></span>
+                                <div class="vc-award-text">Peringkat 1<br>SMA Terbaik<br>Se-Kab/Kota</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JADWAL & FAQ -->
+    <section id="jadwal" class="pengumuman-section">
+        <div class="section-inner">
+            <div class="section-tag">Jadwal & Informasi</div>
+            <h2 class="section-title">Jadwal Penting &<br>Pertanyaan Umum</h2>
+
+            <div class="timeline-grid">
+                <div>
+                    <div class="timeline">
+                        <div class="tl-item tl-active">
+                            <div class="tl-dot">✓</div>
+                            <div class="tl-content">
+                                <div class="tl-date">1 Mei — 30 Mei 2025</div>
+                                <div class="tl-title">Pendaftaran Online Dibuka</div>
+                                <p class="tl-desc">Pengisian formulir dan unggah dokumen melalui portal PSB online.</p>
+                            </div>
+                        </div>
+                        <div class="tl-item tl-active">
+                            <div class="tl-dot">✓</div>
+                            <div class="tl-content">
+                                <div class="tl-date">2 — 10 Juni 2025</div>
+                                <div class="tl-title">Seleksi Administrasi</div>
+                                <p class="tl-desc">Verifikasi berkas pendaftaran oleh panitia penerimaan.</p>
+                            </div>
+                        </div>
+                        <div class="tl-item tl-upcoming">
+                            <div class="tl-dot">3</div>
+                            <div class="tl-content">
+                                <div class="tl-date">15 — 20 Juni 2025</div>
+                                <div class="tl-title">Ujian Seleksi</div>
+                                <p class="tl-desc">Tes potensi akademik dan tes kemampuan dasar secara online.</p>
+                            </div>
+                        </div>
+                        <div class="tl-item tl-upcoming">
+                            <div class="tl-dot">4</div>
+                            <div class="tl-content">
+                                <div class="tl-date">1 Juli 2025</div>
+                                <div class="tl-title">Pengumuman Hasil</div>
+                                <p class="tl-desc">Hasil seleksi diumumkan melalui portal dan email terdaftar.</p>
+                            </div>
+                        </div>
+                        <div class="tl-item tl-upcoming" style="padding-bottom: 0">
+                            <div class="tl-dot">5</div>
+                            <div class="tl-content">
+                                <div class="tl-date">7 — 14 Juli 2025</div>
+                                <div class="tl-title">Registrasi Ulang & MOS</div>
+                                <p class="tl-desc">Registrasi ulang dan pengenalan lingkungan sekolah bagi siswa baru.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="faq-list">
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">
+                                <span class="faq-q-text">Apa saja dokumen yang diperlukan untuk mendaftar?</span>
+                                <div class="faq-icon">+</div>
+                            </div>
+                            <div class="faq-a">
+                                <p class="faq-a-text">Dokumen yang diperlukan antara lain: fotokopi ijazah/SKHUN SMP yang telah dilegalisir, fotokopi KTP orang tua, fotokopi Kartu Keluarga, pas foto terbaru 3×4 (2 lembar), dan sertifikat prestasi (jika mendaftar jalur prestasi). Semua dokumen diunggah dalam format PDF/JPG maksimal 2MB per file.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">
+                                <span class="faq-q-text">Apakah ada biaya pendaftaran?</span>
+                                <div class="faq-icon">+</div>
+                            </div>
+                            <div class="faq-a">
+                                <p class="faq-a-text">Pendaftaran PSB Online Muallimat tidak dipungut biaya (gratis). Khusus jalur afirmasi, seluruh biaya pendidikan akan ditanggung melalui program beasiswa pemerintah daerah.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">
+                                <span class="faq-q-text">Bagaimana cara mengecek status pendaftaran saya?</span>
+                                <div class="faq-icon">+</div>
+                            </div>
+                            <div class="faq-a">
+                                <p class="faq-a-text">Setelah mendaftar, Anda akan mendapatkan nomor pendaftaran unik. Gunakan nomor tersebut bersama tanggal lahir untuk login ke portal PSB dan memantau status pendaftaran secara real-time. Notifikasi juga akan dikirimkan ke email yang terdaftar.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">
+                                <span class="faq-q-text">Apakah bisa mendaftar lebih dari satu jalur?</span>
+                                <div class="faq-icon">+</div>
+                            </div>
+                            <div class="faq-a">
+                                <p class="faq-a-text">Setiap calon siswa hanya dapat mendaftar pada satu jalur penerimaan. Pastikan Anda memilih jalur yang paling sesuai dengan kualifikasi dan kondisi Anda sebelum mengajukan pendaftaran.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">
+                                <span class="faq-q-text">Berapa nilai minimum untuk jalur reguler?</span>
+                                <div class="faq-icon">+</div>
+                            </div>
+                            <div class="faq-a">
+                                <p class="faq-a-text">Untuk jalur reguler, rata-rata nilai rapor semester 1–5 minimal 75,00 dengan nilai mata pelajaran Matematika dan Bahasa Indonesia minimal 70. Tidak ada nilai di bawah 65 untuk seluruh mata pelajaran.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section id="daftar" class="cta-section">
+        <div class="cta-bg"></div>
+        <div class="cta-inner">
+            <div class="hero-badge" style="margin: 0 auto 1.5rem; display: inline-flex;">
+                <div class="badge-dot"></div>
+                <span id="cta-deadline-badge">Penutupan Pendaftaran</span>
+            </div>
+            <h2 class="cta-title">
+                Langkah Pertama Menuju<br>
+                <em>Karir & Masa Depan Gemilang</em>
+            </h2>
+            <p class="cta-desc">
+                Ribuan siswa berprestasi telah mempercayakan pendidikan mereka di sini. Kini giliranmu.
+            </p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-primary" style="font-size:1rem; padding: 1rem 2.5rem;">
+                    ✦ &nbsp;Daftar Sekarang
+                </a>
+                <a href="#" class="btn-secondary" style="font-size:1rem; padding: 1rem 2.5rem;">
+                    Unduh Brosur &nbsp;↓
+                </a>
+            </div>
+            <p class="cta-deadline">Batas pendaftaran: <strong id="cta-deadline-text">—</strong> — Jangan sampai terlambat!</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo" style="display:inline-flex;">
+                        <img class="logo-emblem" src="https://h.top4top.io/p_3809mnyx31.png" alt="Logo Muallimat">
+                        <div class="logo-text">
+                            <span class="logo-title">Muallimat</span>
+                            <span class="logo-sub">Madrasah Mu'allimaat Yogyakarta</span>
+                        </div>
+                    </a>
+                    <p>Mencetak generasi penerus bangsa yang cerdas, berkarakter, dan berdaya saing global sejak 1985.</p>
+                </div>
+
+                <div>
+                    <div class="footer-col-title">Navigasi</div>
+                    <ul class="footer-links">
+                        <li><a href="#">Beranda</a></li>
+                        <li><a href="#jalur">Jalur Penerimaan</a></li>
+                        <li><a href="#alur">Cara Mendaftar</a></li>
+                        <li><a href="#keunggulan">Profil Sekolah</a></li>
+                        <li><a href="#jadwal">Jadwal PSB</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="footer-col-title">Informasi</div>
+                    <ul class="footer-links">
+                        <li><a href="#">Syarat Pendaftaran</a></li>
+                        <li><a href="#">Beasiswa & Afirmasi</a></li>
+                        <li><a href="#">Fasilitas Sekolah</a></li>
+                        <li><a href="#">Ekstrakurikuler</a></li>
+                        <li><a href="#">Cek Status Daftar</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="footer-col-title">Hubungi Kami</div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                        <div class="fc-text">Jl. Pendidikan No. 1, Kec. Gambir, Jakarta Pusat 10110</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                        <div class="fc-text">(021) 345-6789<br>0812-3456-7890 (WA)</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+                        <div class="fc-text">psb@sman-nusantara.sch.id</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="fc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                        <div class="fc-text">Senin–Jumat, 07.00–16.00 WIB</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copy">© 2025 Muallimat. Semua hak dilindungi undang-undang.</div>
+                <div class="footer-accred">
+                    Akreditasi BAN-S/M <span class="accred-badge">A</span>
+                    &nbsp;·&nbsp; NPSN: 20100001
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // NAVBAR SCROLL
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // MOBILE MENU
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
+        // COUNTDOWN — 7 hari dari sekarang
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + 7);
+        deadline.setHours(23, 59, 0, 0);
+
+        const deadlineFormatted = deadline.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        const ctaBadge = document.getElementById('cta-deadline-badge');
+        const ctaText = document.getElementById('cta-deadline-text');
+        if (ctaBadge) ctaBadge.textContent = 'Pendaftaran Ditutup ' + deadlineFormatted;
+        if (ctaText) ctaText.textContent = deadlineFormatted + ' pukul 23:59 WIB';
+
+        function updateCountdown() {
+            const now = new Date();
+            let diff = deadline - now;
+            if (diff < 0) diff = 0;
+            const days = Math.floor(diff / 86400000);
+            const hrs = Math.floor((diff % 86400000) / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+            document.getElementById('cd-hari').textContent = String(days).padStart(2, '0');
+            document.getElementById('cd-jam').textContent = String(hrs).padStart(2, '0');
+            document.getElementById('cd-menit').textContent = String(mins).padStart(2, '0');
+            document.getElementById('cd-detik').textContent = String(secs).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // PROGRESS BAR
+        setTimeout(() => {
+            document.getElementById('progressFill').style.width = '66%';
+        }, 500);
+
+        // REVEAL ON SCROLL
+        const reveals = document.querySelectorAll('.reveal');
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    io.unobserve(e.target);
+                }
+            });
+        }, {
+            threshold: 0.12
+        });
+        reveals.forEach(el => io.observe(el));
+
+        // ANIMATED BARS
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('.vc-bar-fill').forEach(bar => {
+                        const w = bar.getAttribute('data-width');
+                        bar.style.width = '0%';
+                        setTimeout(() => {
+                            bar.style.width = w + '%';
+                        }, 200);
+                    });
+                    barObserver.unobserve(e.target);
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+        document.querySelectorAll('.visual-card').forEach(c => barObserver.observe(c));
+
+        // FAQ TOGGLE
+        function toggleFaq(item) {
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+
+        // SMOOTH SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
