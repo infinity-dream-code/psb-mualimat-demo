@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulir Pendaftaran — PSB Muallimat</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --navy-light: #122848;
+    --navy-mid: #1a3258;
+    --gold: #C9973A;
+    --gold-light: #E5B95A;
+    --gold-pale: #F5E6C8;
+    --gold-glow: rgba(201,151,58,0.18);
+    --cream: #FAF6EE;
+    --cream-dark: #F2EBD9;
+    --text-muted: #6B7A8F;
+    --success: #1A9E75;
+    --error: #E24B4A;
+    --white: #ffffff;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  h1,h2,h3,h4 { font-family: 'Playfair Display', serif; }
+
+  /* ========== LAYOUT ========== */
+  .page-wrap {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .main-area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ========== SIDEBAR ========== */
+  .sidebar {
+    background: var(--navy);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 340px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 2rem;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar { display: none; }
+
+  /* subtle pattern */
+  .sidebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 120% 60% at 110% 20%, rgba(201,151,58,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 80% at -20% 90%, rgba(201,151,58,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-emblem {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .icon-svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  .cst-icon { width: 16px; height: 16px; color: var(--gold); }
+  .sidebar-info-title .icon-svg { width: 14px; height: 14px; color: var(--gold-light); }
+  .dl-icon .icon-svg { width: 18px; height: 18px; color: #F87171; }
+  .inp-icon { color: var(--text-muted); display: flex; align-items: center; }
+  .inp-icon .icon-svg { width: 16px; height: 16px; opacity: 0.55; }
+  .jo-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; color: var(--gold); }
+  .jo-icon .icon-svg { width: 28px; height: 28px; }
+  .jur-icon { color: var(--navy); }
+  .jur-icon .icon-svg { width: 20px; height: 20px; }
+  .jur-opt input:checked ~ .jur-body .jur-icon { color: var(--gold); }
+  .ub-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; color: var(--gold); }
+  .ub-icon .icon-svg { width: 26px; height: 26px; }
+  .upload-box.has-file .ub-icon { color: var(--success); }
+  .success-icon { color: var(--success); font-size: 0; }
+  .success-icon .icon-svg { width: 36px; height: 36px; stroke-width: 2; }
+
+  .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .logo-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: white; }
+  .logo-sub { font-size: 0.68rem; color: var(--gold-light); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* STEPS NAV */
+  .steps-nav {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .steps-title {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 1.75rem;
+  }
+
+  .step-nav-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    position: relative;
+  }
+
+  .step-nav-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 52px;
+    bottom: -8px;
+    width: 1px;
+    background: rgba(201,151,58,0.15);
+  }
+
+  .step-nav-item.active:not(:last-child)::after {
+    background: rgba(201,151,58,0.35);
+  }
+
+  .sni-dot {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
+    border: 1.5px solid rgba(201,151,58,0.2);
+    color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.04);
+    margin-top: 1px;
+  }
+
+  .sni-dot .icon-svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .step-nav-item.active .sni-dot {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(201,151,58,0.15);
+  }
+
+  .step-nav-item.done .sni-dot {
+    background: rgba(26,158,117,0.15);
+    border-color: rgba(26,158,117,0.4);
+    color: #5CE0B0;
+  }
+
+  .sni-info { flex: 1; }
+
+  .sni-label {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+  }
+
+  .step-nav-item.active .sni-label { color: var(--gold-light); }
+  .step-nav-item.done .sni-label { color: rgba(92,224,176,0.6); }
+
+  .sni-name {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.3);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .step-nav-item.active .sni-name { color: white; }
+  .step-nav-item.done .sni-name { color: rgba(255,255,255,0.55); }
+
+  .sni-desc {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.2);
+    margin-top: 0.25rem;
+    line-height: 1.5;
+  }
+
+  .step-nav-item.active .sni-desc { color: rgba(255,255,255,0.45); }
+
+  /* SIDEBAR INFO BOX */
+  .sidebar-info {
+    position: relative; z-index: 1;
+    margin-top: 2rem;
+    background: rgba(201,151,58,0.08);
+    border: 1px solid rgba(201,151,58,0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .sidebar-info-title {
+    font-size: 0.75rem;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  .sidebar-info p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.65;
+  }
+
+  .sidebar-info strong { color: var(--gold-light); font-weight: 600; }
+
+  /* DEADLINE BADGE */
+  .deadline-badge {
+    position: relative; z-index: 1;
+    margin-top: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    background: rgba(226,75,74,0.1);
+    border: 1px solid rgba(226,75,74,0.2);
+    border-radius: 10px;
+  }
+
+  .dl-icon {
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(226,75,74,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: #F87171;
+  }
+
+  .dl-text { font-size: 0.78rem; line-height: 1.5; }
+  .dl-label { color: rgba(255,255,255,0.35); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .dl-date { color: #F87171; font-weight: 600; }
+
+  /* ========== MAIN CONTENT ========== */
+  .main-content {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 3rem clamp(1.75rem, 4vw, 4rem) 5rem;
+    box-sizing: border-box;
+  }
+
+  /* TOP BAR */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a { color: var(--navy); text-decoration: none; font-weight: 500; }
+  .breadcrumb span { color: var(--text-muted); }
+
+  .save-status {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .save-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: savePulse 3s ease-in-out infinite;
+  }
+
+  @keyframes savePulse {
+    0%,100%{ opacity:1 } 50%{ opacity:0.4 }
+  }
+
+  /* STEP HEADER */
+  .step-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .step-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; color: var(--gold);
+    letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-tag::before {
+    content: ''; width: 20px; height: 1px; background: var(--gold);
+  }
+
+  .step-title {
+    font-size: 1.9rem; font-weight: 700;
+    color: var(--navy); line-height: 1.15;
+    margin-bottom: 0.6rem;
+  }
+
+  .step-subtitle {
+    font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;
+  }
+
+  /* PROGRESS BAR TOP */
+  .progress-strip {
+    height: 3px;
+    background: rgba(11,31,58,0.08);
+    border-radius: 100px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+  }
+
+  .progress-strip-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 100px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ========== FORM PANELS ========== */
+  .form-panel {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .form-panel.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* SECTION CARD */
+  .form-card {
+    background: white;
+    border: 1px solid rgba(11,31,58,0.07);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s;
+  }
+
+  .form-card:hover {
+    box-shadow: 0 4px 20px rgba(11,31,58,0.06);
+  }
+
+  .card-section-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(11,31,58,0.06);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  /* FIELD GROUPS */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .field-row.col-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field-row.col-1 { grid-template-columns: 1fr; }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+
+  label .req {
+    color: var(--gold);
+    margin-left: 2px;
+  }
+
+  label .opt {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.75rem;
+    margin-left: 4px;
+  }
+
+  /* INPUT STYLES */
+  .inp, .sel, .ta {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid rgba(11,31,58,0.1);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--navy);
+    background: #FAFAFA;
+    transition: all 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .inp::placeholder, .ta::placeholder { color: rgba(11,31,58,0.28); }
+
+  .inp:hover, .sel:hover, .ta:hover {
+    border-color: rgba(11,31,58,0.2);
+    background: white;
+  }
+
+  .inp:focus, .sel:focus, .ta:focus {
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(201,151,58,0.1);
+  }
+
+  .inp.error, .sel.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(226,75,74,0.08); }
+  .inp.success, .sel.success { border-color: var(--success); }
+
+  .sel {
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='8' viewBox='0 0 14 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%230B1F3A' stroke-opacity='0.4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  .ta { resize: vertical; min-height: 90px; line-height: 1.65; }
+
+  .field-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--error);
+    display: none;
+  }
+
+  .field-group.has-error .field-error { display: block; }
+  .field-group.has-error label { color: var(--error); }
+
+  /* INPUT WITH ICON */
+  .inp-wrap {
+    position: relative;
+  }
+
+  .inp-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .inp-wrap .inp { padding-left: 2.5rem; }
+
+  /* RADIO JALUR */
+  .jalur-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .jalur-opt {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .jalur-opt input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .jalur-opt-body {
+    border: 1.5px solid rgba(11,31,58,0.1);
+    border-radius: 12px;
+    padding: 1.1rem;
+    transition: all 0.2s;
+    background: #FAFAFA;
+    text-align: center;
+  }
+
+  .jalur-opt:hover .jalur-opt-body {
+    border-color: var(--gold);
+    background: white;
+  }
+
+  .jalur-opt input:checked ~ .jalur-opt-body {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+    box-shadow: 0 0 0 3px rgba(201,151,58,0.12);
+  }
+
+  .jo-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; color: var(--gold); }
+  .jo-icon .icon-svg { width: 28px; height: 28px; }
+  .jo-name { font-size: 0.82rem; font-weight: 700; color: var(--navy); display: block; }
+  .jo-quota { font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.2rem; }
+
+  .jalur-opt input:checked ~ .jalur-opt-body .jo-name { color: var(--navy); }
+
+  .check-mark {
+    position: absolute;
+    top: 0.5rem; right: 0.5rem;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    color: white;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s;
+  }
+
+  .jalur-opt input:checked ~ .jalur-opt-body .check-mark {
+    opacity: 1; transform: scale(1);
+  }
+
+  /* JURUSAN TOGGLE */
+  .jurusan-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+
+  .jur-opt { position: relative; cursor: pointer; }
+  .jur-opt input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .jur-body {
+    border: 1.5px solid rgba(11,31,58,0.1);
+    border-radius: 12px;
+    padding: 1.25rem 1.25rem;
+    transition: all 0.2s;
+    background: #FAFAFA;
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+
+  .jur-opt:hover .jur-body { border-color: var(--gold); background: white; }
+
+  .jur-opt input:checked ~ .jur-body {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+    box-shadow: 0 0 0 3px rgba(201,151,58,0.1);
+  }
+
+  .jur-icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px;
+    background: rgba(11,31,58,0.06);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    color: var(--navy);
+  }
+
+  .jur-opt input:checked ~ .jur-body .jur-icon { background: rgba(201,151,58,0.15); }
+
+  .jur-info {}
+  .jur-name { font-weight: 700; font-size: 0.9rem; color: var(--navy); display: block; margin-bottom: 0.2rem; }
+  .jur-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* UPLOAD AREA */
+  .upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .upload-box {
+    border: 1.5px dashed rgba(11,31,58,0.15);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #FAFAFA;
+    position: relative;
+  }
+
+  .upload-box:hover {
+    border-color: var(--gold);
+    background: white;
+  }
+
+  .upload-box.has-file {
+    border-color: var(--success);
+    background: rgba(26,158,117,0.04);
+    border-style: solid;
+  }
+
+  .upload-box input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+  }
+
+  .ub-icon { display: flex; justify-content: center; margin-bottom: 0.5rem; color: var(--gold); }
+  .ub-icon .icon-svg { width: 26px; height: 26px; }
+  .upload-box.has-file .ub-icon { color: var(--success); }
+  .ub-name { font-size: 0.8rem; font-weight: 600; color: var(--navy); display: block; margin-bottom: 0.2rem; }
+  .ub-hint { font-size: 0.72rem; color: var(--text-muted); }
+  .ub-status { font-size: 0.72rem; color: var(--success); font-weight: 600; margin-top: 0.3rem; display: none; }
+  .upload-box.has-file .ub-status { display: block; }
+  .upload-box.has-file .ub-hint { display: none; }
+
+  /* CHECKBOX STYLES */
+  .check-group {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: rgba(11,31,58,0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(11,31,58,0.06);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0.75rem;
+  }
+
+  .check-group:hover { border-color: var(--gold); background: rgba(201,151,58,0.04); }
+
+  .check-group input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+  }
+
+  .cg-text { font-size: 0.85rem; color: var(--navy); line-height: 1.6; }
+  .cg-text a { color: var(--gold); text-decoration: underline; }
+
+  /* PHOTO UPLOAD */
+  .photo-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .photo-preview {
+    width: 120px; height: 150px;
+    border-radius: 12px;
+    border: 2px dashed rgba(11,31,58,0.15);
+    background: #F5F5F5;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .photo-preview:hover { border-color: var(--gold); }
+
+  .photo-preview input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  }
+
+  .photo-preview img {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; inset: 0;
+    border-radius: 10px;
+  }
+
+  .photo-preview span { font-size: 1.8rem; margin-bottom: 0.4rem; display: block; }
+  .photo-placeholder-icon { display: flex; justify-content: center; margin-bottom: 0.4rem; color: var(--gold); }
+  .photo-placeholder-icon .icon-svg { width: 32px; height: 32px; opacity: 0.45; }
+  .photo-info { flex: 1; }
+  .photo-info ul { list-style: none; display: grid; gap: 0.4rem; }
+  .photo-info li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+  .photo-info li::before { content: '✓'; color: var(--success); font-weight: 700; font-size: 0.7rem; }
+
+  /* REVIEW SECTION */
+  .review-card {
+    background: white;
+    border: 1px solid rgba(11,31,58,0.07);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  .rv-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(11,31,58,0.05);
+    background: rgba(11,31,58,0.02);
+  }
+
+  .rv-title {
+    font-size: 0.82rem; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .rv-title .icon-svg { width: 15px; height: 15px; color: var(--gold); }
+
+  .rv-edit {
+    font-size: 0.78rem; color: var(--gold);
+    cursor: pointer; font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  .rv-edit:hover { opacity: 0.7; }
+
+  .rv-body { padding: 1.25rem 1.5rem; }
+
+  .rv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem 2rem;
+  }
+
+  .rv-item {}
+  .rv-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.2rem; }
+  .rv-val { font-size: 0.88rem; color: var(--navy); font-weight: 500; }
+
+  /* NOMOR PENDAFTARAN */
+  .reg-number-box {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .reg-number-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 80% at 110% 50%, rgba(201,151,58,0.12) 0%, transparent 60%);
+  }
+
+  .rn-label {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    position: relative; z-index: 1;
+  }
+
+  .rn-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    display: block;
+    position: relative; z-index: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .rn-note {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.3);
+    position: relative; z-index: 1;
+  }
+
+  /* NAVIGATION BUTTONS */
+  .form-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(11,31,58,0.07);
+  }
+
+  .success-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1.5px solid rgba(11,31,58,0.12);
+    border-radius: 10px;
+    background: white;
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-back:hover { border-color: var(--navy); background: var(--cream); }
+
+  .btn-next {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.8rem 2rem;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-next:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(201,151,58,0.3);
+  }
+
+  .btn-next:active { transform: translateY(0); }
+
+  .btn-submit {
+    background: var(--navy);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    background: var(--navy-mid);
+    box-shadow: 0 8px 24px rgba(11,31,58,0.3);
+  }
+
+  /* SUCCESS STATE */
+  .success-panel {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .success-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(26,158,117,0.1);
+    border: 2px solid rgba(26,158,117,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--success);
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .success-title { font-size: 1.75rem; color: var(--navy); margin-bottom: 0.75rem; }
+  .success-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; max-width: 400px; margin: 0 auto 2rem; }
+
+  .next-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: left;
+    margin-top: 2rem;
+  }
+
+  .ns-card {
+    background: white;
+    border: 1px solid rgba(11,31,58,0.07);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.2s;
+  }
+
+  .ns-card:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(11,31,58,0.07); }
+
+  .ns-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold-pale);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .ns-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+  .ns-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
+
+  /* TOOLTIP */
+  .tooltip-wrap {
+    position: relative;
+    display: inline-flex; align-items: center;
+    margin-left: 4px;
+    cursor: help;
+  }
+
+  .tooltip-icon {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: rgba(11,31,58,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .tooltip-body {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 7px;
+    white-space: nowrap;
+    z-index: 10;
+    line-height: 1.5;
+    font-weight: 400;
+    max-width: 220px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .tooltip-wrap:hover .tooltip-body { display: block; }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    .page-wrap { flex-direction: column; }
+    .sidebar {
+      position: static;
+      height: auto;
+      width: 100%;
+      padding: 1.5rem;
+    }
+    .steps-nav { display: none; }
+    .deadline-badge { display: none; }
+    .sidebar-info { display: none; }
+    .main-content { padding: 2rem 1.25rem 4rem; }
+    .top-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .field-row { grid-template-columns: 1fr; }
+    .field-row.col-3 { grid-template-columns: 1fr; }
+    .jalur-options { grid-template-columns: 1fr; }
+    .jurusan-opts { grid-template-columns: 1fr; }
+    .upload-grid { grid-template-columns: 1fr; }
+    .next-steps { grid-template-columns: 1fr; }
+    .rv-grid { grid-template-columns: 1fr; }
+    .photo-upload-area {
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      text-align: center;
+    }
+    .photo-info { width: 100%; text-align: left; }
+    .form-nav {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+    .form-nav .btn-back,
+    .form-nav .btn-next {
+      width: 100%;
+      justify-content: center;
+    }
+    .form-nav .btn-next {
+      white-space: normal;
+      line-height: 1.45;
+      padding: 0.85rem 1.25rem;
+    }
+    .success-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .success-actions .btn-back,
+    .success-actions .btn-next {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <img class="logo-emblem" src="https://h.top4top.io/p_3809mnyx31.png" alt="Logo Muallimat">
+      <div class="logo-text">
+        <span class="logo-title">Muallimat</span>
+        <span class="logo-sub">PSB Online 2025</span>
+      </div>
+    </a>
+
+    <nav class="steps-nav">
+      <div class="steps-title">Langkah Pendaftaran</div>
+
+      <div class="step-nav-item active" id="nav-1" onclick="goToStep(1)">
+        <div class="sni-dot" id="dot-1"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div>
+        <div class="sni-info">
+          <div class="sni-label">Langkah 1</div>
+          <div class="sni-name">Pilih Jalur</div>
+          <div class="sni-desc">Jalur & jurusan yang dituju</div>
+        </div>
+      </div>
+
+      <div class="step-nav-item" id="nav-2" onclick="goToStep(2)">
+        <div class="sni-dot" id="dot-2"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="sni-info">
+          <div class="sni-label">Langkah 2</div>
+          <div class="sni-name">Data Pribadi</div>
+          <div class="sni-desc">Identitas dan biodata diri</div>
+        </div>
+      </div>
+
+      <div class="step-nav-item" id="nav-3" onclick="goToStep(3)">
+        <div class="sni-dot" id="dot-3"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="sni-info">
+          <div class="sni-label">Langkah 3</div>
+          <div class="sni-name">Data Orang Tua</div>
+          <div class="sni-desc">Informasi orang tua/wali</div>
+        </div>
+      </div>
+
+      <div class="step-nav-item" id="nav-4" onclick="goToStep(4)">
+        <div class="sni-dot" id="dot-4"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="sni-info">
+          <div class="sni-label">Langkah 4</div>
+          <div class="sni-name">Unggah Dokumen</div>
+          <div class="sni-desc">Berkas persyaratan</div>
+        </div>
+      </div>
+
+      <div class="step-nav-item" id="nav-5" onclick="goToStep(5)">
+        <div class="sni-dot" id="dot-5"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div>
+        <div class="sni-info">
+          <div class="sni-label">Langkah 5</div>
+          <div class="sni-name">Review & Kirim</div>
+          <div class="sni-desc">Periksa & submit pendaftaran</div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-info">
+      <div class="sidebar-info-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15 8a3 3 0 1 0-6 0c0 2 1 3 1 5h4c0-2 1-3 1-5z"/></svg> Informasi</div>
+      <p>Data yang kamu isi akan <strong>tersimpan otomatis</strong>. Kamu bisa melanjutkan pendaftaran kapan saja sebelum deadline.</p>
+    </div>
+
+    <div class="deadline-badge">
+      <div class="dl-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="dl-text">
+        <div class="dl-label">Batas Pendaftaran</div>
+        <div class="dl-date" id="sidebar-deadline">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+  <!-- ===== MAIN ===== -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="breadcrumb">
+        <a href="index.html">Beranda</a>
+        <span>›</span>
+        <span>Formulir Pendaftaran</span>
+      </div>
+      <div class="save-status">
+        <div class="save-dot"></div>
+        Tersimpan otomatis
+      </div>
+    </div>
+
+    <!-- PROGRESS STRIP -->
+    <div class="progress-strip">
+      <div class="progress-strip-fill" id="progressStrip" style="width: 20%"></div>
+    </div>
+
+    <!-- ==================== STEP 1 ==================== -->
+    <div class="form-panel active" id="step-1">
+      <div class="step-header">
+        <div class="step-tag">Langkah 1 dari 5</div>
+        <h1 class="step-title">Pilih Jalur &<br>Jurusan</h1>
+        <p class="step-subtitle">Tentukan jalur penerimaan dan program studi yang ingin kamu masuki. Pastikan memilih sesuai dengan kualifikasi yang dimiliki.</p>
+      </div>
+
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> Jalur Penerimaan</div>
+
+        <div class="jalur-options">
+          <label class="jalur-opt">
+            <input type="radio" name="jalur" value="prestasi" checked>
+            <div class="jalur-opt-body">
+              <span class="jo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v3a5 5 0 0 1-10 0V4z"/><path d="M5 4H3v1a3 3 0 0 0 3 3"/><path d="M19 4h2v1a3 3 0 0 1-3 3"/></svg></span>
+              <span class="jo-name">Prestasi</span>
+              <span class="jo-quota">90 Kursi</span>
+              <div class="check-mark">✓</div>
+            </div>
+          </label>
+          <label class="jalur-opt">
+            <input type="radio" name="jalur" value="reguler">
+            <div class="jalur-opt-body">
+              <span class="jo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></span>
+              <span class="jo-name">Reguler</span>
+              <span class="jo-quota">180 Kursi</span>
+              <div class="check-mark">✓</div>
+            </div>
+          </label>
+          <label class="jalur-opt">
+            <input type="radio" name="jalur" value="afirmasi">
+            <div class="jalur-opt-body">
+              <span class="jo-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+              <span class="jo-name">Afirmasi</span>
+              <span class="jo-quota">54 Kursi</span>
+              <div class="check-mark">✓</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Pilihan Jurusan</div>
+
+        <div class="jurusan-opts">
+          <label class="jur-opt">
+            <input type="radio" name="jurusan" value="ipa" checked>
+            <div class="jur-body">
+              <div class="jur-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6.5L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-10.5V3"/><path d="M8 15h8"/></svg></div>
+              <div class="jur-info">
+                <span class="jur-name">IPA / MIPA</span>
+                <span class="jur-desc">Matematika, Fisika, Kimia, Biologi. Cocok untuk calon dokter, insinyur, dan saintis.</span>
+              </div>
+            </div>
+          </label>
+          <label class="jur-opt">
+            <input type="radio" name="jurusan" value="ips">
+            <div class="jur-body">
+              <div class="jur-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+              <div class="jur-info">
+                <span class="jur-name">IPS / Sosial</span>
+                <span class="jur-desc">Ekonomi, Sosiologi, Geografi, Sejarah. Ideal untuk calon ekonom, pengusaha, dan diplomat.</span>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <div style="margin-top: 1.25rem;">
+          <div class="field-group">
+            <label>Pilihan Jurusan ke-2 <span class="opt">(opsional)</span></label>
+            <select class="sel">
+              <option value="">— Tidak ada pilihan ke-2 —</option>
+              <option>IPA / MIPA</option>
+              <option>IPS / Sosial</option>
+            </select>
+            <span class="field-hint">Digunakan jika pilihan pertama penuh.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <a href="index.html" class="btn-back">← Kembali</a>
+        <button class="btn-next" onclick="nextStep(1)">Lanjutkan → Data Pribadi</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 2 ==================== -->
+    <div class="form-panel" id="step-2">
+      <div class="step-header">
+        <div class="step-tag">Langkah 2 dari 5</div>
+        <h1 class="step-title">Data Pribadi<br>Calon Siswa</h1>
+        <p class="step-subtitle">Isi dengan data yang sesuai dengan dokumen resmi (KTP/Akta Kelahiran). Pastikan semua informasi akurat.</p>
+      </div>
+
+      <!-- FOTO -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Foto Diri</div>
+        <div class="photo-upload-area">
+          <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
+            <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
+            <span class="photo-placeholder-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <small>Klik untuk<br>unggah foto</small>
+          </div>
+          <div class="photo-info">
+            <ul>
+              <li>Foto formal berseragam sekolah atau kemeja</li>
+              <li>Latar belakang warna merah atau biru</li>
+              <li>Wajah terlihat jelas, tidak memakai kacamata</li>
+              <li>Ukuran 3×4 cm, format JPG/PNG</li>
+              <li>Maksimal ukuran file 2 MB</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Identitas Diri</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nama Lengkap <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="Sesuai akta kelahiran" id="namaLengkap">
+          </div>
+          <div class="field-group">
+            <label>Nama Panggilan</label>
+            <input type="text" class="inp" placeholder="Nama yang biasa digunakan">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>NIK <span class="req">*</span>
+              <span class="tooltip-wrap">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-body">Nomor Induk Kependudukan 16 digit sesuai KTP/KK</span>
+              </span>
+            </label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+              <input type="text" class="inp" placeholder="16 digit NIK" maxlength="16" id="nik" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>NISN <span class="req">*</span>
+              <span class="tooltip-wrap">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-body">Nomor Induk Siswa Nasional dari sekolah asal</span>
+              </span>
+            </label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1"/></svg></span>
+              <input type="text" class="inp" placeholder="10 digit NISN" maxlength="10" id="nisn" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row col-3">
+          <div class="field-group">
+            <label>Jenis Kelamin <span class="req">*</span></label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>Laki-laki</option>
+              <option>Perempuan</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Agama <span class="req">*</span></label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>Islam</option>
+              <option>Kristen</option>
+              <option>Katolik</option>
+              <option>Hindu</option>
+              <option>Buddha</option>
+              <option>Konghucu</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Kewarganegaraan <span class="req">*</span></label>
+            <select class="sel">
+              <option>WNI</option>
+              <option>WNA</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Tempat Lahir <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="Kota/Kabupaten kelahiran">
+          </div>
+          <div class="field-group">
+            <label>Tanggal Lahir <span class="req">*</span></label>
+            <input type="date" class="inp">
+          </div>
+        </div>
+      </div>
+
+      <!-- KONTAK -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Kontak & Domisili</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nomor HP/WhatsApp <span class="req">*</span></label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
+              <input type="tel" class="inp" placeholder="08xxxxxxxxxx">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Email Aktif <span class="req">*</span></label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+              <input type="email" class="inp" placeholder="email@domain.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row col-1">
+          <div class="field-group">
+            <label>Alamat Tempat Tinggal <span class="req">*</span></label>
+            <textarea class="ta" placeholder="Jalan, nomor, RT/RW, kelurahan..."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row col-3">
+          <div class="field-group">
+            <label>Provinsi <span class="req">*</span></label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option selected>DKI Jakarta</option>
+              <option>Jawa Barat</option>
+              <option>Jawa Tengah</option>
+              <option>Jawa Timur</option>
+              <option>Banten</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Kota/Kabupaten <span class="req">*</span></label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>Jakarta Pusat</option>
+              <option>Jakarta Utara</option>
+              <option>Jakarta Barat</option>
+              <option>Jakarta Selatan</option>
+              <option>Jakarta Timur</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Kode Pos <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="12345" maxlength="5" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+      </div>
+
+      <!-- SEKOLAH ASAL -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Asal Sekolah</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nama SMP/MTs Asal <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="Nama lengkap sekolah asal">
+          </div>
+          <div class="field-group">
+            <label>NPSN Sekolah Asal</label>
+            <input type="text" class="inp" placeholder="8 digit NPSN" maxlength="8">
+          </div>
+        </div>
+
+        <div class="field-row col-3">
+          <div class="field-group">
+            <label>Tahun Lulus <span class="req">*</span></label>
+            <select class="sel">
+              <option>2025</option>
+              <option>2024</option>
+              <option>2023</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Rata-rata Nilai Rapor <span class="req">*</span></label>
+            <input type="number" class="inp" placeholder="0.00" min="0" max="100" step="0.01">
+          </div>
+          <div class="field-group">
+            <label>Nilai UN/Ujian Sekolah</label>
+            <input type="number" class="inp" placeholder="0.00" min="0" max="100" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(2)">← Kembali</button>
+        <button class="btn-next" onclick="nextStep(2)">Lanjutkan → Data Orang Tua</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 3 ==================== -->
+    <div class="form-panel" id="step-3">
+      <div class="step-header">
+        <div class="step-tag">Langkah 3 dari 5</div>
+        <h1 class="step-title">Data Orang Tua<br>& Wali</h1>
+        <p class="step-subtitle">Informasi orang tua atau wali yang bertanggung jawab. Data ini diperlukan untuk keperluan administrasi sekolah.</p>
+      </div>
+
+      <!-- AYAH -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Data Ayah</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nama Lengkap Ayah <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="Nama sesuai KTP">
+          </div>
+          <div class="field-group">
+            <label>NIK Ayah</label>
+            <input type="text" class="inp" placeholder="16 digit NIK" maxlength="16" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+
+        <div class="field-row col-3">
+          <div class="field-group">
+            <label>Pendidikan Terakhir</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>SD</option><option>SMP</option><option>SMA</option>
+              <option>D3</option><option>S1</option><option>S2</option><option>S3</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Pekerjaan</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>PNS</option><option>TNI/Polri</option><option>Swasta</option>
+              <option>Wiraswasta</option><option>Petani</option><option>Nelayan</option>
+              <option>Tidak Bekerja</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Penghasilan/Bulan</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>≤ Rp 1.000.000</option>
+              <option>Rp 1 — 3 Juta</option>
+              <option>Rp 3 — 5 Juta</option>
+              <option>Rp 5 — 10 Juta</option>
+              <option>> Rp 10 Juta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nomor HP Ayah</label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
+              <input type="tel" class="inp" placeholder="08xxxxxxxxxx">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Email Ayah <span class="opt">(opsional)</span></label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+              <input type="email" class="inp" placeholder="email@domain.com">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IBU -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Data Ibu</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nama Lengkap Ibu <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="Nama sesuai KTP">
+          </div>
+          <div class="field-group">
+            <label>NIK Ibu</label>
+            <input type="text" class="inp" placeholder="16 digit NIK" maxlength="16" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+
+        <div class="field-row col-3">
+          <div class="field-group">
+            <label>Pendidikan Terakhir</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>SD</option><option>SMP</option><option>SMA</option>
+              <option>D3</option><option>S1</option><option>S2</option><option>S3</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Pekerjaan</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>PNS</option><option>Swasta</option><option>Wiraswasta</option>
+              <option>Ibu Rumah Tangga</option><option>Petani</option><option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Penghasilan/Bulan</label>
+            <select class="sel">
+              <option value="">— Pilih —</option>
+              <option>≤ Rp 1.000.000</option>
+              <option>Rp 1 — 3 Juta</option>
+              <option>Rp 3 — 5 Juta</option>
+              <option>Rp 5 — 10 Juta</option>
+              <option>> Rp 10 Juta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Nomor HP Ibu <span class="req">*</span></label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
+              <input type="tel" class="inp" placeholder="08xxxxxxxxxx">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Email Ibu <span class="opt">(opsional)</span></label>
+            <div class="inp-wrap">
+              <span class="inp-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+              <input type="email" class="inp" placeholder="email@domain.com">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALAMAT ORTU -->
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Alamat Orang Tua</div>
+
+        <div class="field-row col-1" style="margin-bottom: 0.75rem;">
+          <label class="check-group" style="display:flex; align-items:center; gap:0.75rem; padding: 0.8rem 1rem; margin-bottom: 0; cursor:pointer;">
+            <input type="checkbox" id="sameAddress" onchange="toggleSameAddress(this)" style="width:18px;height:18px;accent-color:var(--gold);">
+            <span style="font-size:0.85rem; color:var(--navy); font-weight:500;">Alamat orang tua sama dengan alamat calon siswa</span>
+          </label>
+        </div>
+
+        <div id="addressOrtua">
+          <div class="field-row col-1">
+            <div class="field-group">
+              <label>Alamat Orang Tua <span class="req">*</span></label>
+              <textarea class="ta" placeholder="Jalan, nomor, RT/RW, kelurahan..."></textarea>
+            </div>
+          </div>
+          <div class="field-row col-3">
+            <div class="field-group">
+              <label>Provinsi</label>
+              <select class="sel">
+                <option value="">— Pilih —</option>
+                <option selected>DKI Jakarta</option>
+                <option>Jawa Barat</option>
+                <option>Jawa Tengah</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Kota/Kabupaten</label>
+              <select class="sel">
+                <option value="">— Pilih —</option>
+                <option>Jakarta Pusat</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Kode Pos</label>
+              <input type="text" class="inp" placeholder="12345" maxlength="5">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(3)">← Kembali</button>
+        <button class="btn-next" onclick="nextStep(3)">Lanjutkan → Unggah Dokumen</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 4 ==================== -->
+    <div class="form-panel" id="step-4">
+      <div class="step-header">
+        <div class="step-tag">Langkah 4 dari 5</div>
+        <h1 class="step-title">Unggah<br>Dokumen</h1>
+        <p class="step-subtitle">Upload semua berkas persyaratan dalam format PDF atau JPG/PNG. Pastikan dokumen terbaca dengan jelas dan tidak buram.</p>
+      </div>
+
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Dokumen Wajib</div>
+
+        <div class="upload-grid">
+          <div class="upload-box" id="ub-kk" onclick="triggerUpload('kk')">
+            <input type="file" id="kk" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-kk')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            <span class="ub-name">Kartu Keluarga</span>
+            <span class="ub-hint">PDF/JPG · Maks. 2MB</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-akte" onclick="triggerUpload('akte')">
+            <input type="file" id="akte" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-akte')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span>
+            <span class="ub-name">Akta Kelahiran</span>
+            <span class="ub-hint">PDF/JPG · Maks. 2MB</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-ijazah" onclick="triggerUpload('ijazah')">
+            <input type="file" id="ijazah" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-ijazah')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"/></svg></span>
+            <span class="ub-name">Ijazah / SKHUN</span>
+            <span class="ub-hint">PDF/JPG · Maks. 2MB</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-rapor" onclick="triggerUpload('rapor')">
+            <input type="file" id="rapor" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-rapor')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span>
+            <span class="ub-name">Rapor Semester 1–5</span>
+            <span class="ub-hint">PDF · Maks. 5MB</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Dokumen Pendukung <span style="font-weight:400; color:var(--text-muted); font-size:0.7rem; text-transform:none; letter-spacing:0;">(Opsional)</span></div>
+
+        <div class="upload-grid">
+          <div class="upload-box" id="ub-prestasi" onclick="triggerUpload('prestasi')">
+            <input type="file" id="prestasi" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-prestasi')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5 7 22l5-3 5 3-1.5-7.5"/></svg></span>
+            <span class="ub-name">Sertifikat Prestasi</span>
+            <span class="ub-hint">Kejuaraan / lomba · PDF/JPG</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-kip" onclick="triggerUpload('kip')">
+            <input type="file" id="kip" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-kip')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+            <span class="ub-name">Kartu KIP / PKH</span>
+            <span class="ub-hint">Untuk jalur afirmasi</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-sktm" onclick="triggerUpload('sktm')">
+            <input type="file" id="sktm" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-sktm')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></span>
+            <span class="ub-name">SKTM</span>
+            <span class="ub-hint">Surat keterangan tidak mampu</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+
+          <div class="upload-box" id="ub-rekomendasi" onclick="triggerUpload('rekomendasi')">
+            <input type="file" id="rekomendasi" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ub-rekomendasi')">
+            <span class="ub-icon"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+            <span class="ub-name">Surat Rekomendasi</span>
+            <span class="ub-hint">Dari kepala sekolah asal</span>
+            <span class="ub-status">✓ Berhasil diunggah</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(4)">← Kembali</button>
+        <button class="btn-next" onclick="nextStep(4)">Lanjutkan → Review & Kirim</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 5 ==================== -->
+    <div class="form-panel" id="step-5">
+      <div class="step-header">
+        <div class="step-tag">Langkah 5 dari 5</div>
+        <h1 class="step-title">Review &<br>Kirim Pendaftaran</h1>
+        <p class="step-subtitle">Periksa kembali seluruh data yang telah kamu isi. Setelah dikirim, data tidak dapat diubah tanpa menghubungi panitia.</p>
+      </div>
+
+      <!-- NOMOR -->
+      <div class="reg-number-box">
+        <div class="rn-label">Nomor Pendaftaran Sementara</div>
+        <span class="rn-number" id="regNumber">PSB-2025-XXXXXX</span>
+        <div class="rn-note">Nomor resmi akan dikirim ke email setelah formulir terkirim</div>
+      </div>
+
+      <!-- REVIEW JALUR -->
+      <div class="review-card">
+        <div class="rv-header">
+          <div class="rv-title"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> Jalur & Jurusan</div>
+          <span class="rv-edit" onclick="goToStep(1)">✏ Edit</span>
+        </div>
+        <div class="rv-body">
+          <div class="rv-grid">
+            <div class="rv-item">
+              <div class="rv-label">Jalur Masuk</div>
+              <div class="rv-val">Jalur Prestasi</div>
+            </div>
+            <div class="rv-item">
+              <div class="rv-label">Jurusan Pilihan 1</div>
+              <div class="rv-val">IPA / MIPA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW PRIBADI -->
+      <div class="review-card">
+        <div class="rv-header">
+          <div class="rv-title"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Data Pribadi</div>
+          <span class="rv-edit" onclick="goToStep(2)">✏ Edit</span>
+        </div>
+        <div class="rv-body">
+          <div class="rv-grid">
+            <div class="rv-item">
+              <div class="rv-label">Nama Lengkap</div>
+              <div class="rv-val" id="rv-nama">—</div>
+            </div>
+            <div class="rv-item">
+              <div class="rv-label">NIK</div>
+              <div class="rv-val" id="rv-nik">—</div>
+            </div>
+            <div class="rv-item">
+              <div class="rv-label">NISN</div>
+              <div class="rv-val" id="rv-nisn">—</div>
+            </div>
+            <div class="rv-item">
+              <div class="rv-label">Sekolah Asal</div>
+              <div class="rv-val">SMP Negeri 1 Jakarta</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW ORTU -->
+      <div class="review-card">
+        <div class="rv-header">
+          <div class="rv-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Data Orang Tua</div>
+          <span class="rv-edit" onclick="goToStep(3)">✏ Edit</span>
+        </div>
+        <div class="rv-body">
+          <div class="rv-grid">
+            <div class="rv-item">
+              <div class="rv-label">Nama Ayah</div>
+              <div class="rv-val">—</div>
+            </div>
+            <div class="rv-item">
+              <div class="rv-label">Nama Ibu</div>
+              <div class="rv-val">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW DOKUMEN -->
+      <div class="review-card">
+        <div class="rv-header">
+          <div class="rv-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Dokumen</div>
+          <span class="rv-edit" onclick="goToStep(4)">✏ Edit</span>
+        </div>
+        <div class="rv-body">
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+            <span style="font-size:0.78rem; padding:0.3rem 0.8rem; background:rgba(26,158,117,0.1); border:1px solid rgba(26,158,117,0.2); color:#0D7A5A; border-radius:100px; font-weight:500;">✓ Kartu Keluarga</span>
+            <span style="font-size:0.78rem; padding:0.3rem 0.8rem; background:rgba(26,158,117,0.1); border:1px solid rgba(26,158,117,0.2); color:#0D7A5A; border-radius:100px; font-weight:500;">✓ Akta Kelahiran</span>
+            <span style="font-size:0.78rem; padding:0.3rem 0.8rem; background:rgba(201,151,58,0.1); border:1px solid rgba(201,151,58,0.25); color:#8A6020; border-radius:100px; font-weight:500;">⚠ Ijazah/SKHUN (belum)</span>
+            <span style="font-size:0.78rem; padding:0.3rem 0.8rem; background:rgba(26,158,117,0.1); border:1px solid rgba(26,158,117,0.2); color:#0D7A5A; border-radius:100px; font-weight:500;">✓ Rapor</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERNYATAAN -->
+      <div class="form-card" style="border-color: rgba(11,31,58,0.1);">
+        <div class="card-section-title"><svg class="icon-svg cst-icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Pernyataan & Persetujuan</div>
+
+        <label class="check-group">
+          <input type="checkbox" id="check1" required>
+          <span class="cg-text">Saya menyatakan bahwa seluruh data dan dokumen yang saya isikan adalah <strong>benar dan dapat dipertanggungjawabkan</strong>. Apabila terbukti ada pemalsuan, saya bersedia menerima sanksi sesuai ketentuan yang berlaku.</span>
+        </label>
+
+        <label class="check-group">
+          <input type="checkbox" id="check2" required>
+          <span class="cg-text">Saya telah membaca dan menyetujui <a href="#">Syarat & Ketentuan</a> serta <a href="#">Kebijakan Privasi</a> Muallimat.</span>
+        </label>
+
+        <label class="check-group">
+          <input type="checkbox" id="check3">
+          <span class="cg-text">Saya bersedia dihubungi oleh pihak sekolah untuk keperluan verifikasi data melalui nomor HP dan email yang terdaftar.</span>
+        </label>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(5)">← Kembali</button>
+        <button class="btn-next btn-submit" onclick="submitForm()">✦ &nbsp;Kirim Pendaftaran</button>
+      </div>
+    </div>
+
+    <!-- ==================== SUCCESS ==================== -->
+    <div class="form-panel" id="step-success">
+      <div class="success-panel">
+        <div class="success-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg></div>
+        <h2 class="success-title">Pendaftaran Berhasil!</h2>
+        <p class="success-desc">Selamat! Formulir pendaftaran kamu telah berhasil dikirim. Nomor pendaftaran dan informasi selanjutnya akan dikirimkan ke email yang terdaftar.</p>
+
+        <div class="reg-number-box" style="max-width: 360px; margin: 0 auto;">
+          <div class="rn-label">Nomor Pendaftaran Kamu</div>
+          <span class="rn-number">PSB-2025-487231</span>
+          <div class="rn-note">Simpan nomor ini untuk keperluan pengecekan status</div>
+        </div>
+
+        <div class="next-steps">
+          <div class="ns-card">
+            <div class="ns-num">1</div>
+            <div class="ns-title">Cek Email</div>
+            <p class="ns-desc">Email konfirmasi dan bukti pendaftaran akan dikirimkan dalam 5 menit.</p>
+          </div>
+          <div class="ns-card">
+            <div class="ns-num">2</div>
+            <div class="ns-title">Verifikasi Berkas</div>
+            <p class="ns-desc">Panitia akan memverifikasi berkas kamu dalam 2–3 hari kerja.</p>
+          </div>
+          <div class="ns-card">
+            <div class="ns-num">3</div>
+            <div class="ns-title">Pantau Status</div>
+            <p class="ns-desc">Gunakan nomor pendaftaran untuk mengecek status di portal PSB.</p>
+          </div>
+        </div>
+
+        <div class="success-actions">
+          <a href="#" class="btn-next" style="text-decoration:none;">Cek Status Pendaftaran</a>
+          <a href="index.html" class="btn-back" style="text-decoration:none;">Kembali ke Beranda</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+  const CHECK_ICON = '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+  const stepIconHtml = {};
+
+  for (let i = 1; i <= totalSteps; i++) {
+    stepIconHtml[i] = document.getElementById('dot-' + i).innerHTML;
+  }
+
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() + 7);
+  deadline.setHours(23, 59, 0, 0);
+  const deadlineEl = document.getElementById('sidebar-deadline');
+  if (deadlineEl) {
+    deadlineEl.textContent = deadline.toLocaleDateString('id-ID', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    }) + ' · 23:59 WIB';
+  }
+
+  function updateProgress() {
+    const pct = (currentStep / totalSteps) * 100;
+    document.getElementById('progressStrip').style.width = pct + '%';
+
+    for (let i = 1; i <= totalSteps; i++) {
+      const navItem = document.getElementById('nav-' + i);
+      const dot = document.getElementById('dot-' + i);
+      navItem.classList.remove('active', 'done');
+      if (i === currentStep) {
+        navItem.classList.add('active');
+        dot.innerHTML = stepIconHtml[i];
+      } else if (i < currentStep) {
+        navItem.classList.add('done');
+        dot.innerHTML = CHECK_ICON;
+      } else {
+        dot.innerHTML = stepIconHtml[i];
+      }
+    }
+  }
+
+  function goToStep(n) {
+    if (n > currentStep) return; // can only go back from sidebar
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep(from) {
+    if (from < totalSteps) {
+      document.getElementById('step-' + from).classList.remove('active');
+      currentStep = from + 1;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // sync review values on step 5
+      if (currentStep === 5) {
+        syncReview();
+        generateRegNumber();
+      }
+    }
+  }
+
+  function prevStep(from) {
+    if (from > 1) {
+      document.getElementById('step-' + from).classList.remove('active');
+      currentStep = from - 1;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function syncReview() {
+    const nama = document.getElementById('namaLengkap').value;
+    const nik  = document.getElementById('nik').value;
+    const nisn = document.getElementById('nisn').value;
+    document.getElementById('rv-nama').textContent = nama || '—';
+    document.getElementById('rv-nik').textContent  = nik  || '—';
+    document.getElementById('rv-nisn').textContent = nisn || '—';
+  }
+
+  function generateRegNumber() {
+    const rand = Math.floor(100000 + Math.random() * 900000);
+    const num = 'PSB-2025-' + rand;
+    document.getElementById('regNumber').textContent = num;
+  }
+
+  function submitForm() {
+    const c1 = document.getElementById('check1').checked;
+    const c2 = document.getElementById('check2').checked;
+    if (!c1 || !c2) {
+      alert('Mohon centang pernyataan wajib sebelum mengirim pendaftaran.');
+      return;
+    }
+    // Show loading then success
+    const btn = event.target;
+    btn.textContent = 'Mengirim...';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('step-5').classList.remove('active');
+      document.getElementById('step-success').classList.add('active');
+      // mark all done
+      for (let i = 1; i <= 5; i++) {
+        const navItem = document.getElementById('nav-' + i);
+        const dot = document.getElementById('dot-' + i);
+        navItem.classList.remove('active');
+        navItem.classList.add('done');
+        dot.innerHTML = CHECK_ICON;
+      }
+      document.getElementById('progressStrip').style.width = '100%';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1800);
+  }
+
+  function triggerUpload(id) {
+    // clicks are handled by input[type=file] directly
+  }
+
+  function handleUpload(input, boxId) {
+    if (input.files && input.files[0]) {
+      const box = document.getElementById(boxId);
+      box.classList.add('has-file');
+      const icon = box.querySelector('.ub-icon');
+      icon.innerHTML = CHECK_ICON;
+    }
+  }
+
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('photoPreview');
+        let img = preview.querySelector('img');
+        if (!img) {
+          img = document.createElement('img');
+          preview.appendChild(img);
+        }
+        img.src = e.target.result;
+        const placeholder = preview.querySelector('.photo-placeholder-icon');
+        if (placeholder) placeholder.style.display = 'none';
+        preview.querySelector('small').style.display = 'none';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function toggleSameAddress(cb) {
+    document.getElementById('addressOrtua').style.display = cb.checked ? 'none' : 'block';
+  }
+
+  // Init
+  updateProgress();
+</script>
+</body>
+</html>
